@@ -71,7 +71,7 @@ class S3OpsTest(unittest.TestCase):
         try:
             resp = self._bucket.Object(key).get()
         except:
-            self.fail("No object with key \"{}\"".format(key))
+            self.fail(f'No object with key \"{key}\"')
             return
         actual_contents = resp['Body'].read()
         self.assertEqual(contents, actual_contents)

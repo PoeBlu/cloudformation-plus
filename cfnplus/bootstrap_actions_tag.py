@@ -89,19 +89,17 @@ def evaluate(arg_node, ctx):
 
     tag_name = 'Aruba::BootstrapActions'
     if not isinstance(arg_node, collections.Mapping):
-        raise utils.InvalidTemplate("{}: must contain mapping".format(tag_name))
+        raise utils.InvalidTemplate(f"{tag_name}: must contain mapping")
     try:
         actions_node = arg_node['Actions']
         log_uri_node = arg_node.get('LogUri')
         timeout_node = arg_node['Timeout']
     except KeyError as e:
-        raise utils.InvalidTemplate("{}: missing '{}'".\
-            format(tag_name, e.args[0]))
+        raise utils.InvalidTemplate(f"{tag_name}: missing '{e.args[0]}'")
 
     # check 'Actions' argument
     if not isinstance(actions_node, collections.Sequence):
-        raise utils.InvalidTemplate("{}: 'Actions' must contain a sequence".\
-            format(tag_name))
+        raise utils.InvalidTemplate(f"{tag_name}: 'Actions' must contain a sequence")
 
     # make UserData script
     cfn_subs = {
@@ -113,15 +111,14 @@ def evaluate(arg_node, ctx):
         try:
             path_node = action_node['Path']
         except KeyError:
-            raise utils.InvalidTemplate("{}: an action is missing '{}'".\
-                format(tag_name, e.args[0]))
+            raise utils.InvalidTemplate(f"{tag_name}: an action is missing '{e.args[0]}'")
 
-        cfn_subs['s3_uri_{}'.format(i)] = path_node
+        cfn_subs[f's3_uri_{i}'] = path_node
 
         args_node = action_node.get('Args', [])
         args = []
         for j, n in enumerate(args_node):
-            placeholder = 'arg_{}_{}'.format(i, j)
+            placeholder = f'arg_{i}_{j}'
             cfn_subs[placeholder] = n
             args.append('"${' + placeholder + '}"')
 

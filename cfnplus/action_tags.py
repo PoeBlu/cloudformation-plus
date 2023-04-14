@@ -160,11 +160,13 @@ def eval_beforecreation_or_aftercreation(tag_name, arg_node, ctx):
     '''
 
     if ctx.template_is_imported:
-        raise utils.InvalidTemplate("Actions are not allowed in this template, " + \
-            "but found {}".format(tag_name))
+        raise utils.InvalidTemplate(
+            f"Actions are not allowed in this template, but found {tag_name}"
+        )
 
-    ex = utils.InvalidTemplate("Invalid value for {}: {}".\
-        format(tag_name, json.dumps(arg_node)))
+    ex = utils.InvalidTemplate(
+        f"Invalid value for {tag_name}: {json.dumps(arg_node)}"
+    )
     if not isinstance(arg_node, collections.Sequence):
         raise ex
 
@@ -178,8 +180,7 @@ def eval_beforecreation_or_aftercreation(tag_name, arg_node, ctx):
         try:
             action_handler = _ACTION_HANDLERS[action_name]
         except KeyError:
-            raise utils.InvalidTemplate("Invalid action: {}".\
-                format(action_name))
+            raise utils.InvalidTemplate(f"Invalid action: {action_name}")
         actions.append(action_handler(action_arg, ctx))
 
     return actions

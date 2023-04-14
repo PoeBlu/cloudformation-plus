@@ -146,26 +146,27 @@ def process_template(template_str, template_params, aws_region, \
     param_dict = {}
     for param in template_params:
         key = param['ParameterKey']
-        use_prev = param.get('UsePreviousValue', False)
-        if use_prev:
+        if use_prev := param.get('UsePreviousValue', False):
             if 'ParameterValue' in param:
                 raise ValueError("Param value given but also told to use " \
                     "previous value")
             if old_stack is None:
                 raise ValueError("Told to use prev param value but there " \
                     "is no existing stack")
-            value = None
-            for sp in old_stack.parameters:
-                if sp['ParameterKey'] == key:
-                    value = sp['ParameterValue']
-                    break
+            value = next(
+                (
+                    sp['ParameterValue']
+                    for sp in old_stack.parameters
+                    if sp['ParameterKey'] == key
+                ),
+                None,
+            )
             if value is None:
-                raise ValueError("Existing stack has no param \"{}\"".\
-                    format(key))
-        else:
-            if 'ParameterValue' not in param:
-                raise ValueError("No value for param \"{}\"".format(key))
+                raise ValueError(f'Existing stack has no param \"{key}\"')
+        elif 'ParameterValue' in param:
             value = param['ParameterValue']
+        else:
+            raise ValueError(f'No value for param \"{key}\"')
         param_dict[key] = value
 
     ctx = utils.Context(param_dict, aws_region, template_path, \

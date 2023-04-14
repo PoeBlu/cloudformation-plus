@@ -51,8 +51,7 @@ def eval_expr(node, ctx):
 
     if not isinstance(node, collections.Mapping) or len(node) != 1:
         node_str = json.dumps(node)
-        raise utils.InvalidTemplate("Invalid scalar expression: {}".\
-            format(node_str))
+        raise utils.InvalidTemplate(f"Invalid scalar expression: {node_str}")
 
     handlers = {
         'Fn::Sub': _eval_cfn_sub,
@@ -64,7 +63,7 @@ def eval_expr(node, ctx):
     try:
         h = handlers[func_name]
     except KeyError:
-        raise utils.InvalidTemplate("Unknown function: {}".format(func_name))
+        raise utils.InvalidTemplate(f"Unknown function: {func_name}")
     return h(func_arg, ctx)
 
 def _eval_cfn_ref(node, ctx):
@@ -77,14 +76,12 @@ def _eval_cfn_ref(node, ctx):
     '''
 
     if not isinstance(node, utils.base_str):
-        raise utils.InvalidTemplate("Invalid arg for 'Ref': {}".\
-            format(json.dumps(node)))
+        raise utils.InvalidTemplate(f"Invalid arg for 'Ref': {json.dumps(node)}")
 
     try:
         return ctx.resolve_var(node)
     except KeyError:
-        raise utils.InvalidTemplate("Cannot resolve variable \"{}\"".\
-            format(node))
+        raise utils.InvalidTemplate(f'Cannot resolve variable \"{node}\"')
 
 def _eval_cfn_importvalue(node, ctx):
     '''
@@ -113,8 +110,7 @@ def _eval_cfn_sub(node, ctx):
     if isinstance(node, utils.base_str):
         node = [node, {}]
 
-    ex = utils.InvalidTemplate("Invalid arg for 'Fn::Sub': {}".\
-        format(json.dumps(node)))
+    ex = utils.InvalidTemplate(f"Invalid arg for 'Fn::Sub': {json.dumps(node)}")
     if not isinstance(node, collections.Sequence) or len(node) != 2:
         raise ex
 
@@ -141,12 +137,11 @@ def _eval_cfn_sub(node, ctx):
             break
 
         # resolve variable
-        var_name = match.group(1)
+        var_name = match[1]
         try:
             var_value = new_ctx.resolve_var(var_name)
         except KeyError:
-            raise utils.InvalidTemplate("Cannot resolve variable \"{}\"".\
-                format(var_name))
+            raise utils.InvalidTemplate(f'Cannot resolve variable \"{var_name}\"')
 
         # write variable's value to result
         result_buff.write(format_str[pos:match.start()])

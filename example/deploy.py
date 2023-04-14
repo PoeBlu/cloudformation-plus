@@ -58,7 +58,7 @@ def make_or_update_stack(cfn, template, params):
         TemplateBody=template,
         Parameters=params,
         Capabilities=['CAPABILITY_IAM'],
-        ChangeSetName='{}-change-set'.format(_STACK_NAME),
+        ChangeSetName=f'{_STACK_NAME}-change-set',
         ChangeSetType='UPDATE' if stack_exists else 'CREATE',
     )
 
@@ -76,8 +76,7 @@ def make_or_update_stack(cfn, template, params):
                 print("No changes")
                 return
 
-            msg = "Failed to make change set for {}: {}".\
-                format(_STACK_NAME, reason)
+            msg = f"Failed to make change set for {_STACK_NAME}: {reason}"
             raise Exception(msg)
 
         time.sleep(2)

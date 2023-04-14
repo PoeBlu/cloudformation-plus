@@ -182,6 +182,5 @@ def delete_unused_lambda_code(stack_names, bucket_name, s3_code_prefix, \
     for obj in bucket.objects.filter(Prefix=s3_code_prefix):
         if obj.key in refed_code:
             continue
-        print("Deleting unused Lambda code s3://{}/{}".\
-            format(bucket_name, obj.key))
+        print(f"Deleting unused Lambda code s3://{bucket_name}/{obj.key}")
         obj.delete()

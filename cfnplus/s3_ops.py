@@ -154,7 +154,7 @@ def make_dir(bucket, key, undoers, committers):
 
     # check if dir already exists
     files = bucket.objects.filter(Prefix=key)
-    if len(list(files)) > 0:
+    if list(files):
         # already exists
         return
 
@@ -172,4 +172,5 @@ def make_dir(bucket, key, undoers, committers):
     def undo():
         obj.delete(VersionId=new_version)
         obj.wait_until_not_exists(VersionId=new_version)
+
     undoers.append(undo)

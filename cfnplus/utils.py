@@ -80,7 +80,7 @@ def parse_s3_uri(uri):
 
     uri = urlparse(uri)
     if uri.scheme != 's3':
-        raise InvalidTemplate("Invalid URI: '{}'".format(uri))
+        raise InvalidTemplate(f"Invalid URI: '{uri}'")
     bucket = uri.netloc
     key = uri.path
     if key.startswith('/'):
@@ -153,8 +153,7 @@ class Context(object):
             try:
                 args['NextToken'] = result['NextToken']
             except KeyError:
-                raise InvalidTemplate("No such CloudFormation export: {}".\
-                    format(var_name))
+                raise InvalidTemplate(f"No such CloudFormation export: {var_name}")
 
     def abspath(self, rel_path):
         template_dir = os.path.dirname(self.template_path)
